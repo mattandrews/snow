@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Snow</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link href="/style.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <div class="center">
+            <div class="text-center">
+                <h1 id="js-msg">Add a message</h1>
+                <form method="post" action="/submit">
+                    <% if (hasError) { %>
+                        <p class="error">Error! Try again below.</p>
+                    <% } %>
+                    <input type="text" name="name" placeholder="Your name" />
+                    <textarea name="msg" placeholder="Your festive message"></textarea>
+                    <input type="submit" value="Send message" />
+                </form>
+            </div>
+        </div>
+
+        <script src="/snow.js"></script>
+    </body>
+</html>

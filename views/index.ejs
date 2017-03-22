@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Snow</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link href="/style.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <div class="center">
+            <div class="text-center">
+                <h1 id="js-msg"></h1>
+                <h2 id="js-name"></h2>
+            </div>
+        </div>
+
+        <footer>
+            Wifi: <strong>M&amp;M</strong> &ndash; Password: <strong>sixpence</strong><br />
+            Add your message: <strong>http://bit.ly/snowmessage</strong><br />
+            Add to Spotify playlist: <strong>http://bit.ly/mattmaddyxmas</strong>
+        </footer>
+
+        <script src="/snow.js"></script>
+        <script>
+            var socket = io.connect(':8000');
+
+            var delay = 5000;
+            var interval;
+            var messages;
+
+            socket.on('init', function (msgList) {
+                messages = msgList;
+                loop();
+            });
+
+            socket.on('msg-received', function (msg) {
+                // stop current loop
+                window.clearInterval(interval);
+                messages.push(msg);
+                updateMsg(msg);
+                // restart loop (after pause)
+                window.setTimeout(loop, delay);
+            });
+
+            var curMsgIndex = 0;
+            var getNextMsg = function () {
+                var msg;
+                if (messages[curMsgIndex]) {
+                    msg = messages[curMsgIndex];
+                    curMsgIndex = curMsgIndex + 1;
+                } else { // restart
+                    msg = messages[0];
+                    curMsgIndex = 0;
+                }
+                return msg;
+            };
+
+            var updateMsg = function (msg) {
+                var textMsg = $('#js-msg');
+                var textName = $('#js-name');
+                textMsg.fadeOut('slow', function () {
+                    textMsg.html(msg.msg).fadeIn('fast');
+                });
+                textName.fadeOut('slow', function () {
+                    var n = '';
+                    if (msg.name) {
+                        n = '- ' + msg.name;
+                    }
+                    textName.html(n).fadeIn('fast');
+                });
+            };
+
+            var loop = function () {
+                interval = window.setInterval(function () {
+                    updateMsg(getNextMsg());
+                }, delay);
+            };
+
+        </script>
+    </body>
+</html>
